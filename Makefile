@@ -4,7 +4,7 @@ run:
 	@go run cmd/main.go
 
 build:
-	@export CGO_ENABLED=0 &&
+	@export CGO_ENABLED=0
 	@go build -o webhook cmd/main.go
 
 image: build
