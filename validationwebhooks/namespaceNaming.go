@@ -25,7 +25,7 @@ func (v *NamespaceValidator) Handle(ctx context.Context, req admission.Request) 
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	exp := `^(?:mgb|fdc)-(?:dba|sre|bigdata)-.+?-(?:test|prod)`
+	exp := `^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`
 	isValid, err := v.validateNaming(namespace.Name, exp)
 	if err != nil {
 		klog.Errorf("regexp expr compile error: %s", err.Error())
