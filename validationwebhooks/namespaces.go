@@ -35,8 +35,8 @@ func (v *NamespaceValidator) Handle(ctx context.Context, req admission.Request) 
 	//exp := `^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`
 	err = ValidateNaming(v.ConfPath)
 	if err != nil {
-		klog.Errorf(decodeError, err.Error())
-		return admission.Denied(fmt.Sprintf(decodeError, err.Error()))
+		klog.Errorf(namingCheckError, err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))
 	}
 	return admission.Allowed("")
 }

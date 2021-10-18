@@ -54,9 +54,6 @@ func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request)
 
 }
 
-// podValidator implements admission.DecoderInjector.
-// A decoder will be automatically injected.
-
 // InjectDecoder injects the decoder.
 func (v *DeploymentValidator) InjectDecoder(d *admission.Decoder) error {
 	v.decoder = d
