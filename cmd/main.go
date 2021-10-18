@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	"github.com/spf13/pflag"
 	"os"
 
 	wb "github.com/toughnoah/melon/validationwebhooks"
@@ -35,6 +36,13 @@ func init() {
 
 func main() {
 	entryLog := log.Log.WithName("entrypoint")
+	file := pflag.StringP("config", "f", "", "specify the config file for melon")
+	help := pflag.BoolP("help", "h", false, "Show help message")
+	pflag.Parse()
+	if *help {
+		pflag.Usage()
+		os.Exit(0)
+	}
 
 	// Setup a Manager
 	entryLog.Info("setting up manager")
@@ -49,8 +57,9 @@ func main() {
 	hookServer := mgr.GetWebhookServer()
 
 	entryLog.Info("registering webhooks to the webhook server")
-	hookServer.Register("/validate-v1-pod-naming", &webhook.Admission{Handler: &wb.PodValidator{Client: mgr.GetClient()}})
-	hookServer.Register("/validate-v1-namespace-naming", &webhook.Admission{Handler: &wb.NamespaceValidator{Client: mgr.GetClient()}})
+	confPath := *file
+	hookServer.Register("/validate-v1-pod", &webhook.Admission{Handler: &wb.PodValidator{Client: mgr.GetClient()}})
+	hookServer.Register("/validate-v1-namespace", &webhook.Admission{Handler: &wb.NamespaceValidator{Client: mgr.GetClient(), ConfPath: confPath}})
 
 	entryLog.Info("starting manager")
 	if err := mgr.Start(signals.SetupSignalHandler()); err != nil {
