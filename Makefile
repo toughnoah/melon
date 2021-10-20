@@ -11,3 +11,7 @@ image: build
 	@echo $(TAG)
 	@docker build . -t toughnoah/melon:$(TAG)
 	@docker push toughnoah/melon:$(TAG)
+
+test:
+	@go test ./... -v -coverprofile=cover.out
+	@go tool cover -func=cover.out

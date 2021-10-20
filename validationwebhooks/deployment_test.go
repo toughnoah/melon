@@ -163,7 +163,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 			name: "test validate passe",
 			v: &DeploymentValidator{
 				Client:   fake.NewClientBuilder().Build(),
-				ConfPath: "../pkg/testdata",
+				ConfPath: "../internal/testdata",
 				decoder:  decoder,
 			},
 			args: args{
@@ -189,7 +189,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 			name: "test validate failed",
 			v: &DeploymentValidator{
 				Client:   fake.NewClientBuilder().Build(),
-				ConfPath: "../pkg/testdata",
+				ConfPath: "../internal/testdata",
 				decoder:  decoder,
 			},
 			args: args{
