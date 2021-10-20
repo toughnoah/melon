@@ -58,7 +58,7 @@ func main() {
 
 	entryLog.Info("registering webhooks to the webhook server")
 	confPath := *file
-	hookServer.Register("/validate-v1-pod", &webhook.Admission{Handler: &wb.DeploymentValidator{Client: mgr.GetClient()}})
+	hookServer.Register("/validate-v1-deployment", &webhook.Admission{Handler: &wb.DeploymentValidator{Client: mgr.GetClient()}})
 	hookServer.Register("/validate-v1-namespace", &webhook.Admission{Handler: &wb.NamespaceValidator{Client: mgr.GetClient(), ConfPath: confPath}})
 
 	entryLog.Info("starting manager")
