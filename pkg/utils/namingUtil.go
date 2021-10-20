@@ -8,14 +8,6 @@ import (
 	"regexp"
 )
 
-const (
-	defaultMelonConfig = "/etc/melon/config"
-
-	namingError = "naming expr error. want string type, but get %s"
-
-	matchExprError = "not match the expr %s"
-)
-
 func getNamingExpr(path string) (string, error) {
 	if len(path) == 0 {
 		path = defaultMelonConfig
@@ -24,7 +16,7 @@ func getNamingExpr(path string) (string, error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigName("config")
 	if err := viper.ReadInConfig(); err != nil {
-		klog.Fatalf("can not read config file for webhook server! %v", err)
+		klog.Errorf("can not read config file for webhook server! %v", err)
 		return "", err
 	}
 
@@ -42,18 +34,19 @@ func validateNaming(name, expr string) error {
 	}
 
 	match := reg.FindAllStringSubmatch(name, -1)
+	fmt.Println(name)
 	if match != nil {
 		return nil
 	}
 	return errors.New(fmt.Sprintf(matchExprError, expr))
 }
 
-func ValidateNaming(path string) error {
+func ValidateNaming(name, path string) error {
 	expr, err := getNamingExpr(path)
 	if err != nil {
 		return err
 	}
-	if err = validateNaming(path, expr); err != nil {
+	if err = validateNaming(name, expr); err != nil {
 		return err
 	}
 	return nil
