@@ -8,6 +8,7 @@ import (
 func Test_getNamingExpr(t *testing.T) {
 	type args struct {
 		path string
+		kind int
 	}
 	tests := []struct {
 		name    string
@@ -17,19 +18,25 @@ func Test_getNamingExpr(t *testing.T) {
 	}{
 		{
 			name:    "test correct expr",
-			args:    args{"../testdata"},
+			args:    args{"../testdata", Deployment},
+			want:    `^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`,
+			wantErr: false,
+		},
+		{
+			name:    "test default expr",
+			args:    args{"../testdata", Secret},
 			want:    `^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`,
 			wantErr: false,
 		},
 		{
 			name:    "test correct expr",
-			args:    args{"../abc"},
+			args:    args{"../abc", Deployment},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getNamingExpr(tt.args.path)
+			got, err := getNamingExpr(tt.args.path, tt.args.kind)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getNamingExpr() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -83,6 +90,7 @@ func TestValidateNaming(t *testing.T) {
 	type args struct {
 		name string
 		path string
+		kind int
 	}
 	tests := []struct {
 		name    string
@@ -94,6 +102,7 @@ func TestValidateNaming(t *testing.T) {
 			args: args{
 				name: "noah-dev-melon-test",
 				path: "../testdata",
+				kind: Deployment,
 			},
 			wantErr: false,
 		},
@@ -108,7 +117,7 @@ func TestValidateNaming(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := ValidateNaming(tt.args.name, tt.args.path); (err != nil) != tt.wantErr {
+			if err := ValidateNaming(tt.args.name, tt.args.path, tt.args.kind); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateNaming() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

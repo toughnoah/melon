@@ -19,15 +19,18 @@ package validationwebhooks
 import (
 	"context"
 	"fmt"
+	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
+	"reflect"
+	"testing"
+
 	admissionv1 "k8s.io/api/admission/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
-	"reflect"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
-	"testing"
 )
 
 var (
@@ -234,6 +237,100 @@ func TestDeploymentValidator_InjectDecoder(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.v.InjectDecoder(tt.args.d); (err != nil) != tt.wantErr {
 				t.Errorf("DeploymentValidator.InjectDecoder() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_validateResources(t *testing.T) {
+	type args struct {
+		deploy *appsv1.Deployment
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    bool
+		wantErr bool
+	}{
+		{
+			name: "test pass resources limits validating",
+			args: args{
+				deploy: &appsv1.Deployment{
+					Spec: appsv1.DeploymentSpec{
+						Template: v1.PodTemplateSpec{
+							Spec: v1.PodSpec{
+								Containers: []v1.Container{
+									{
+										Name: "noah test container1",
+										Resources: v1.ResourceRequirements{
+											Limits: map[v1.ResourceName]resource.Quantity{
+												v1.ResourceCPU: resource.MustParse("1000m"),
+											},
+										},
+									},
+									{
+										Name: "noah test container2",
+										Resources: v1.ResourceRequirements{
+											Limits: map[v1.ResourceName]resource.Quantity{
+												v1.ResourceMemory: resource.MustParse("2Gi"),
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			want:    true,
+			wantErr: false,
+		},
+		{
+			name: "test fail resources limits validating",
+			args: args{
+				deploy: &appsv1.Deployment{
+					Spec: appsv1.DeploymentSpec{
+						Template: v1.PodTemplateSpec{
+							Spec: v1.PodSpec{
+								Containers: []v1.Container{
+									{
+										Name: "noah test container1",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			want:    false,
+			wantErr: true,
+		},
+		{
+			name: "test no container",
+			args: args{
+				deploy: &appsv1.Deployment{
+					Spec: appsv1.DeploymentSpec{
+						Template: v1.PodTemplateSpec{
+							Spec: v1.PodSpec{
+								Containers: []v1.Container{},
+							},
+						},
+					},
+				},
+			},
+			want:    false,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := validateResources(tt.args.deploy)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("validateResources() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("validateResources() = %v, want %v", got, tt.want)
 			}
 		})
 	}
