@@ -11,12 +11,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
-const (
-	namingCheckError = "naming check failed: %s"
-
-	decodeError = "decode error: %s"
-)
-
 type NamespaceValidator struct {
 	Client   client.Client
 	decoder  *admission.Decoder
@@ -32,8 +26,7 @@ func (v *NamespaceValidator) Handle(ctx context.Context, req admission.Request) 
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	//exp := `^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`
-	err = ValidateNaming(v.ConfPath)
+	err = ValidateNaming(namespace.Name, v.ConfPath)
 	if err != nil {
 		klog.Errorf(namingCheckError, err.Error())
 		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))

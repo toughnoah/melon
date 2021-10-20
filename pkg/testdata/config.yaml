@@ -1,0 +1,1 @@
+naming_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)

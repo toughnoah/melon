@@ -38,17 +38,17 @@ type DeploymentValidator struct {
 // Handle podValidator admits a pod if a specific annotation exists.
 func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request) admission.Response {
 	deploy := &appsv1.Deployment{}
-
+	fmt.Println(req)
 	err := v.decoder.Decode(req, deploy)
 	if err != nil {
 		klog.Errorf(decodeError, err.Error())
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	err = ValidateNaming(v.ConfPath)
+	err = ValidateNaming(deploy.Name, v.ConfPath)
 	if err != nil {
-		klog.Errorf(decodeError, err.Error())
-		return admission.Denied(fmt.Sprintf(decodeError, err.Error()))
+		klog.Errorf(namingCheckError, err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))
 	}
 	return admission.Allowed("")
 
