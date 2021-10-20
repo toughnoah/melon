@@ -3,7 +3,7 @@ package validationwebhooks
 import (
 	"context"
 	"fmt"
-	. "github.com/toughnoah/melon/pkg/utils"
+	. "github.com/toughnoah/melon/internal/utils"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/klog/v2"
 	"net/http"
