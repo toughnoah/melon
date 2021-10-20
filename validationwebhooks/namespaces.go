@@ -26,7 +26,7 @@ func (v *NamespaceValidator) Handle(ctx context.Context, req admission.Request) 
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	err = ValidateNaming(namespace.Name, v.ConfPath)
+	err = ValidateNaming(namespace.Name, v.ConfPath, Namespace)
 	if err != nil {
 		klog.Errorf(namingCheckError, err.Error())
 		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))
