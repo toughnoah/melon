@@ -19,11 +19,11 @@ package validationwebhooks
 import (
 	"context"
 	"fmt"
-	"k8s.io/klog/v2"
 	"net/http"
 
-	. "github.com/toughnoah/melon/pkg/utils"
+	. "github.com/toughnoah/melon/internal/utils"
 	appsv1 "k8s.io/api/apps/v1"
+	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
@@ -38,17 +38,15 @@ type DeploymentValidator struct {
 // Handle podValidator admits a pod if a specific annotation exists.
 func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request) admission.Response {
 	deploy := &appsv1.Deployment{}
-
 	err := v.decoder.Decode(req, deploy)
 	if err != nil {
 		klog.Errorf(decodeError, err.Error())
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	err = ValidateNaming(v.ConfPath)
-	if err != nil {
-		klog.Errorf(decodeError, err.Error())
-		return admission.Denied(fmt.Sprintf(decodeError, err.Error()))
+	if err = ValidateNaming(deploy.Name, v.ConfPath, DeploymentNamingKind); err != nil {
+		klog.Errorf(namingCheckError, DeploymentNamingKind, err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, DeploymentNamingKind, err.Error()))
 	}
 	return admission.Allowed("")
 

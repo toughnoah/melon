@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: melon 
+  labels:
+    app: melon
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: melon
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: melon
+        version: v1
+    spec:
+      serviceAccountName: melon
+      containers:
+      - name: melon
+        image: toughnoah/melon:v1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: k8s-pems
+          mountPath: /tmp/k8s-webhook-server/serving-certs
+        - name: config
+          mountPath: /etc/melon/
+      volumes:
+      - name: k8s-pems
+        secret:
+          secretName: pems
+      - name: config
+        configMap:
+          name: melon

@@ -3,18 +3,12 @@ package validationwebhooks
 import (
 	"context"
 	"fmt"
-	. "github.com/toughnoah/melon/pkg/utils"
+	. "github.com/toughnoah/melon/internal/utils"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/klog/v2"
 	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
-)
-
-const (
-	namingCheckError = "naming check failed: %s"
-
-	decodeError = "decode error: %s"
 )
 
 type NamespaceValidator struct {
@@ -32,11 +26,10 @@ func (v *NamespaceValidator) Handle(ctx context.Context, req admission.Request) 
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	//exp := `^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`
-	err = ValidateNaming(v.ConfPath)
+	err = ValidateNaming(namespace.Name, v.ConfPath, NamespaceNamingKind)
 	if err != nil {
-		klog.Errorf(namingCheckError, err.Error())
-		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))
+		klog.Errorf(namingCheckError, NamespaceNamingKind, err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, NamespaceNamingKind, err.Error()))
 	}
 	return admission.Allowed("")
 }
