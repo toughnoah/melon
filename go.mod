@@ -3,8 +3,17 @@ module github.com/toughnoah/melon
 go 1.16
 
 require (
-	k8s.io/api v0.21.2
-	k8s.io/client-go v0.21.2
-	k8s.io/klog/v2 v2.8.0
+	github.com/fsnotify/fsnotify v1.4.9
+	github.com/pkg/errors v0.9.1
+	github.com/spf13/pflag v1.0.5
+	github.com/spf13/viper v1.7.0
+	gopkg.in/yaml.v2 v2.4.0
+	istio.io/client-go v1.13.0
+	k8s.io/api v0.23.1
+	k8s.io/apimachinery v0.23.1
+	k8s.io/client-go v0.23.1
+	k8s.io/klog/v2 v2.30.0
+	k8s.io/kubectl v0.22.4
 	sigs.k8s.io/controller-runtime v0.9.2
+	sigs.k8s.io/yaml v1.2.0
 )
