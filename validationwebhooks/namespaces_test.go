@@ -45,7 +45,7 @@ func TestNamespaceValidator_Handle(t *testing.T) {
 			name: "test validate passe",
 			v: &NamespaceValidator{
 				Client:   fake.NewClientBuilder().Build(),
-				ConfPath: "../internal/testdata",
+				ConfPath: "../tests/testdata",
 				decoder:  decoder,
 			},
 			args: args{
@@ -71,7 +71,7 @@ func TestNamespaceValidator_Handle(t *testing.T) {
 			name: "test validate denied",
 			v: &NamespaceValidator{
 				Client:   fake.NewClientBuilder().Build(),
-				ConfPath: "../internal/testdata",
+				ConfPath: "../tests/testdata",
 				decoder:  decoder,
 			},
 			args: args{
@@ -117,7 +117,7 @@ func TestNamespaceValidator_InjectDecoder(t *testing.T) {
 			name: "test inject decoder",
 			v: &NamespaceValidator{
 				Client:   fake.NewClientBuilder().Build(),
-				ConfPath: "../internal/testdata",
+				ConfPath: "../tests/testdata",
 				decoder:  decoder,
 			},
 			args: args{

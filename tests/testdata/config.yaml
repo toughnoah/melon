@@ -1,0 +1,10 @@
+#global expr for all Kind
+default_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+
+# deployment naming expr can override default_expr
+deploy_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+
+# namespaces naming expr can override default_expr
+ns_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+
+is_validate_deploy_limits: true

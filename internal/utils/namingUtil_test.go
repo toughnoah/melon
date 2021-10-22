@@ -18,13 +18,13 @@ func Test_getNamingExpr(t *testing.T) {
 	}{
 		{
 			name:    "test correct expr",
-			args:    args{"../testdata", Deployment},
+			args:    args{"../../tests/testdata", Deployment},
 			want:    `^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`,
 			wantErr: false,
 		},
 		{
 			name:    "test default expr",
-			args:    args{"../testdata", Secret},
+			args:    args{"../../tests/testdata", Secret},
 			want:    `^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`,
 			wantErr: false,
 		},
@@ -101,7 +101,7 @@ func TestValidateNaming(t *testing.T) {
 			name: "test pass validating",
 			args: args{
 				name: "noah-dev-melon-test",
-				path: "../testdata",
+				path: "../../tests/testdata",
 				kind: Deployment,
 			},
 			wantErr: false,
@@ -110,7 +110,7 @@ func TestValidateNaming(t *testing.T) {
 			name: "test fail validating",
 			args: args{
 				name: "noah-test",
-				path: "../testdata",
+				path: "../../tests/testdata",
 			},
 			wantErr: true,
 		},

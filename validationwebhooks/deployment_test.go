@@ -98,6 +98,7 @@ const (
     }
   }
 }`
+
 	testDeploymentFailed = `{
   "apiVersion": "apps/v1",
   "kind": "Deployment",
@@ -151,6 +152,7 @@ const (
     }
   }
 }`
+
 	testDeploymentNoLimitFailed = `{
   "apiVersion": "apps/v1",
   "kind": "Deployment",
@@ -221,7 +223,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 			name: "test validate passe",
 			v: &DeploymentValidator{
 				Client:   fake.NewClientBuilder().Build(),
-				ConfPath: "../internal/testdata",
+				ConfPath: "../tests/testdata",
 				decoder:  decoder,
 			},
 			args: args{
@@ -247,7 +249,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 			name: "test validate failed",
 			v: &DeploymentValidator{
 				Client:   fake.NewClientBuilder().Build(),
-				ConfPath: "../internal/testdata",
+				ConfPath: "../tests/testdata",
 				decoder:  decoder,
 			},
 			args: args{
@@ -273,7 +275,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 			name: "test validate limit failed",
 			v: &DeploymentValidator{
 				Client:   fake.NewClientBuilder().Build(),
-				ConfPath: "../internal/testdata",
+				ConfPath: "../tests/testdata",
 				decoder:  decoder,
 			},
 			args: args{
