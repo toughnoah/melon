@@ -52,6 +52,12 @@ func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request)
 		klog.Errorf(namingCheckError, err.Error())
 		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))
 	}
+
+	err = validateResources(deploy)
+	if err != nil {
+		return admission.Denied(err.Error())
+	}
+
 	return admission.Allowed("")
 
 }
@@ -62,16 +68,16 @@ func (v *DeploymentValidator) InjectDecoder(d *admission.Decoder) error {
 	return nil
 }
 
-func validateResources(deploy *appsv1.Deployment) (bool, error) {
+func validateResources(deploy *appsv1.Deployment) error {
 	containerArray := deploy.Spec.Template.Spec.Containers
 	if len(containerArray) == 0 {
-		return false, errors.New(noContainerError)
+		return errors.New(noContainerError)
 	}
 	for _, container := range containerArray {
 		fmt.Println(reflect.DeepEqual(container.Resources.Limits, v1.ResourceList{}))
 		if len(container.Resources.Limits) == 0 {
-			return false, errors.New(noResourcesLimitsError)
+			return errors.New(noResourcesLimitsError)
 		}
 	}
-	return true, nil
+	return nil
 }
