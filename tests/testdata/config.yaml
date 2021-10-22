@@ -1,0 +1,29 @@
+global:
+  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+
+deployment:
+  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+  resources: 
+    resourceQuotaSpec:
+      hard:
+        cpu: "10"
+        memory: 20Gi
+        pods: "10"
+    limitRangeSpec:
+      limits:
+      - max:
+          cpu: "800m"
+        min:
+          cpu: "200m"
+        type: Container
+
+namespace:
+  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+
+service:
+  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+
+configmap:
+  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+    
+image: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0

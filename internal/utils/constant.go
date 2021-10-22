@@ -1,11 +1,11 @@
 package utils
 
 const (
-	defaultMelonConfig = "/etc/melon/config"
+	defaultMelonConfig = "/etc/melon"
 
-	namingError = "naming expr error. want string type, but get %s"
+	matchExprError = "%s not match the expr %s"
 
-	matchExprError = "not match the expr %s"
+	badValueTypeError = "bad value type of %s, want %s"
 
-	noSuchKindError = "no such kind for expr key"
+	emptyValueError = "get empty rule for validating: %s"
 )

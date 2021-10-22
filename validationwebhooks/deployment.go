@@ -18,15 +18,12 @@ package validationwebhooks
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	v1 "k8s.io/api/core/v1"
-	"k8s.io/klog/v2"
 	"net/http"
-	"reflect"
 
 	. "github.com/toughnoah/melon/internal/utils"
 	appsv1 "k8s.io/api/apps/v1"
+	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
@@ -47,10 +44,9 @@ func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request)
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	err = ValidateNaming(deploy.Name, v.ConfPath, Deployment)
-	if err != nil {
-		klog.Errorf(namingCheckError, err.Error())
-		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))
+	if err = ValidateNaming(deploy.Name, v.ConfPath, DeploymentNamingKind); err != nil {
+		klog.Errorf(namingCheckError, DeploymentNamingKind, err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, DeploymentNamingKind, err.Error()))
 	}
 	return admission.Allowed("")
 
@@ -60,18 +56,4 @@ func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request)
 func (v *DeploymentValidator) InjectDecoder(d *admission.Decoder) error {
 	v.decoder = d
 	return nil
-}
-
-func validateResources(deploy *appsv1.Deployment) (bool, error) {
-	containerArray := deploy.Spec.Template.Spec.Containers
-	if len(containerArray) == 0 {
-		return false, errors.New(noContainerError)
-	}
-	for _, container := range containerArray {
-		fmt.Println(reflect.DeepEqual(container.Resources.Limits, v1.ResourceList{}))
-		if len(container.Resources.Limits) == 0 {
-			return false, errors.New(noResourcesLimitsError)
-		}
-	}
-	return true, nil
 }

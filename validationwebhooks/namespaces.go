@@ -26,10 +26,10 @@ func (v *NamespaceValidator) Handle(ctx context.Context, req admission.Request) 
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	err = ValidateNaming(namespace.Name, v.ConfPath, Namespace)
+	err = ValidateNaming(namespace.Name, v.ConfPath, NamespaceNamingKind)
 	if err != nil {
-		klog.Errorf(namingCheckError, err.Error())
-		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))
+		klog.Errorf(namingCheckError, NamespaceNamingKind, err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, NamespaceNamingKind, err.Error()))
 	}
 	return admission.Allowed("")
 }

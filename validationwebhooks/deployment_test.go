@@ -18,9 +18,6 @@ package validationwebhooks
 
 import (
 	"context"
-	"fmt"
-	v1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
 	"reflect"
 	"testing"
 
@@ -65,7 +62,7 @@ const (
         "containers": [
           {
             "name": "web",
-            "image": "nginx",
+            "image": "docker.io/toughnoah/melon:v1.0",
             "ports": [
               {
                 "name": "web",
@@ -77,7 +74,13 @@ const (
                 "name": "html",
                 "mountPath": "/usr/share/nginx/html"
               }
-            ]
+            ],
+            "resources": {
+              "limits": {
+                "cpu": "500m",
+                "memory": "4Gi"
+              }
+            }
           }
         ],
         "volumes": [
@@ -92,6 +95,7 @@ const (
     }
   }
 }`
+
 	testDeploymentFailed = `{
   "apiVersion": "apps/v1",
   "kind": "Deployment",
@@ -118,7 +122,7 @@ const (
         "containers": [
           {
             "name": "web",
-            "image": "nginx",
+            "image": "docker.io/toughnoah/melon:v1.0",
             "ports": [
               {
                 "name": "web",
@@ -145,7 +149,202 @@ const (
     }
   }
 }`
-	deniedErrorMessage = `not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`
+
+/*     testDeploymentNoLimitFailed = `{ */
+/*   "apiVersion": "apps/v1", */
+/*   "kind": "Deployment", */
+/*   "metadata": { */
+/*     "name": "noah-dev-deployment-test", */
+/*     "labels": { */
+/*       "app": "nginx" */
+/*     } */
+/*   }, */
+/*   "spec": { */
+/*     "replicas": 1, */
+/*     "selector": { */
+/*       "matchLabels": { */
+/*         "app": "nginx" */
+/*       } */
+/*     }, */
+/*     "template": { */
+/*       "metadata": { */
+/*         "labels": { */
+/*           "app": "nginx" */
+/*         } */
+/*       }, */
+/*       "spec": { */
+/*         "containers": [ */
+/*           { */
+/*             "name": "web", */
+/*             "image": "docker.io/toughnoah/melon:v1.0", */
+/*             "ports": [ */
+/*               { */
+/*                 "name": "web", */
+/*                 "containerPort": 80 */
+/*               } */
+/*             ], */
+/*             "volumeMounts": [ */
+/*               { */
+/*                 "name": "html", */
+/*                 "mountPath": "/usr/share/nginx/html" */
+/*               } */
+/*             ] */
+/*           } */
+/*         ], */
+/*         "volumes": [ */
+/*           { */
+/*             "name": "html", */
+/*             "persistentVolumeClaim": { */
+/*               "claimName": "efs-claim-expand-test" */
+/*             } */
+/*           } */
+/*         ] */
+/*       } */
+/*     } */
+/*   } */
+/* }` */
+/*  */
+/*     testDeploymentImageFailed = `{ */
+/*   "apiVersion": "apps/v1", */
+/*   "kind": "Deployment", */
+/*   "metadata": { */
+/*     "name": "noah-dev-deployment-test", */
+/*     "labels": { */
+/*       "app": "nginx" */
+/*     } */
+/*   }, */
+/*   "spec": { */
+/*     "replicas": 1, */
+/*     "selector": { */
+/*       "matchLabels": { */
+/*         "app": "nginx" */
+/*       } */
+/*     }, */
+/*     "template": { */
+/*       "metadata": { */
+/*         "labels": { */
+/*           "app": "nginx" */
+/*         } */
+/*       }, */
+/*       "spec": { */
+/*         "containers": [ */
+/*           { */
+/*             "name": "web", */
+/*             "image": "nginx", */
+/*             "ports": [ */
+/*               { */
+/*                 "name": "web", */
+/*                 "containerPort": 80 */
+/*               } */
+/*             ], */
+/*             "volumeMounts": [ */
+/*               { */
+/*                 "name": "html", */
+/*                 "mountPath": "/usr/share/nginx/html" */
+/*               } */
+/*             ], */
+/*             "resources": { */
+/*               "limits": { */
+/*                 "cpu": "500m", */
+/*                 "memory": "4Gi" */
+/*               } */
+/*             } */
+/*           } */
+/*         ], */
+/*         "volumes": [ */
+/*           { */
+/*             "name": "html", */
+/*             "persistentVolumeClaim": { */
+/*               "claimName": "efs-claim-expand-test" */
+/*             } */
+/*           } */
+/*         ] */
+/*       } */
+/*     } */
+/*   } */
+/* }` */
+/*  */
+/*     testDeploymentMultiImagesFailed = `{ */
+/*   "apiVersion": "apps/v1", */
+/*   "kind": "Deployment", */
+/*   "metadata": { */
+/*     "name": "noah-dev-deployment-test", */
+/*     "labels": { */
+/*       "app": "nginx" */
+/*     } */
+/*   }, */
+/*   "spec": { */
+/*     "replicas": 1, */
+/*     "selector": { */
+/*       "matchLabels": { */
+/*         "app": "nginx" */
+/*       } */
+/*     }, */
+/*     "template": { */
+/*       "metadata": { */
+/*         "labels": { */
+/*           "app": "nginx" */
+/*         } */
+/*       }, */
+/*       "spec": { */
+/*         "containers": [ */
+/*           { */
+/*             "name": "web", */
+/*             "image": "docker.io/toughnoah/melon:v1.0", */
+/*             "ports": [ */
+/*               { */
+/*                 "name": "web", */
+/*                 "containerPort": 80 */
+/*               } */
+/*             ], */
+/*             "volumeMounts": [ */
+/*               { */
+/*                 "name": "html", */
+/*                 "mountPath": "/usr/share/nginx/html" */
+/*               } */
+/*             ], */
+/*             "resources": { */
+/*               "limits": { */
+/*                 "cpu": "500m", */
+/*                 "memory": "4Gi" */
+/*               } */
+/*             } */
+/*           }, */
+/*           { */
+/*             "name": "web", */
+/*             "image": "nginx", */
+/*             "ports": [ */
+/*               { */
+/*                 "name": "web", */
+/*                 "containerPort": 80 */
+/*               } */
+/*             ], */
+/*             "volumeMounts": [ */
+/*               { */
+/*                 "name": "html", */
+/*                 "mountPath": "/usr/share/nginx/html" */
+/*               } */
+/*             ], */
+/*             "resources": { */
+/*               "limits": { */
+/*                 "cpu": "500m", */
+/*                 "memory": "4Gi" */
+/*               } */
+/*             } */
+/*           } */
+/*         ], */
+/*         "volumes": [ */
+/*           { */
+/*             "name": "html", */
+/*             "persistentVolumeClaim": { */
+/*               "claimName": "efs-claim-expand-test" */
+/*             } */
+/*           } */
+/*         ] */
+/*       } */
+/*     } */
+/*   } */
+/* }` */
 )
 
 func TestDeploymentValidator_Handle(t *testing.T) {
@@ -163,7 +362,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 			name: "test validate passe",
 			v: &DeploymentValidator{
 				Client:   fake.NewClientBuilder().Build(),
-				ConfPath: "../internal/testdata",
+				ConfPath: "../tests/testdata",
 				decoder:  decoder,
 			},
 			args: args{
@@ -185,32 +384,6 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 			},
 			want: admission.Allowed(""),
 		},
-		{
-			name: "test validate failed",
-			v: &DeploymentValidator{
-				Client:   fake.NewClientBuilder().Build(),
-				ConfPath: "../internal/testdata",
-				decoder:  decoder,
-			},
-			args: args{
-				ctx: ctx,
-				req: admission.Request{
-					AdmissionRequest: admissionv1.AdmissionRequest{
-						UID: "fake_request_allowed",
-						RequestKind: &metav1.GroupVersionKind{
-							Group:   "apps",
-							Version: "v1",
-							Kind:    "Deployment",
-						},
-						Object: runtime.RawExtension{
-							Raw:    []byte(testDeploymentFailed),
-							Object: &appsv1.Deployment{},
-						},
-					},
-				},
-			},
-			want: admission.Denied(fmt.Sprintf(namingCheckError, deniedErrorMessage)),
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -231,106 +404,22 @@ func TestDeploymentValidator_InjectDecoder(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "test inject decoder",
+			v: &DeploymentValidator{
+				Client:   fake.NewClientBuilder().Build(),
+				ConfPath: "../tests/testdata",
+				decoder:  decoder,
+			},
+			args: args{
+				d: decoder,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.v.InjectDecoder(tt.args.d); (err != nil) != tt.wantErr {
 				t.Errorf("DeploymentValidator.InjectDecoder() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func Test_validateResources(t *testing.T) {
-	type args struct {
-		deploy *appsv1.Deployment
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    bool
-		wantErr bool
-	}{
-		{
-			name: "test pass resources limits validating",
-			args: args{
-				deploy: &appsv1.Deployment{
-					Spec: appsv1.DeploymentSpec{
-						Template: v1.PodTemplateSpec{
-							Spec: v1.PodSpec{
-								Containers: []v1.Container{
-									{
-										Name: "noah test container1",
-										Resources: v1.ResourceRequirements{
-											Limits: map[v1.ResourceName]resource.Quantity{
-												v1.ResourceCPU: resource.MustParse("1000m"),
-											},
-										},
-									},
-									{
-										Name: "noah test container2",
-										Resources: v1.ResourceRequirements{
-											Limits: map[v1.ResourceName]resource.Quantity{
-												v1.ResourceMemory: resource.MustParse("2Gi"),
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-			want:    true,
-			wantErr: false,
-		},
-		{
-			name: "test fail resources limits validating",
-			args: args{
-				deploy: &appsv1.Deployment{
-					Spec: appsv1.DeploymentSpec{
-						Template: v1.PodTemplateSpec{
-							Spec: v1.PodSpec{
-								Containers: []v1.Container{
-									{
-										Name: "noah test container1",
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-			want:    false,
-			wantErr: true,
-		},
-		{
-			name: "test no container",
-			args: args{
-				deploy: &appsv1.Deployment{
-					Spec: appsv1.DeploymentSpec{
-						Template: v1.PodTemplateSpec{
-							Spec: v1.PodSpec{
-								Containers: []v1.Container{},
-							},
-						},
-					},
-				},
-			},
-			want:    false,
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := validateResources(tt.args.deploy)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("validateResources() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("validateResources() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -1,0 +1,13 @@
+vapiVersion: v1
+data:
+  config.yaml: |
+    default_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+    ## deployment naming expr can override default_expr
+    deploy_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+    ## namespaces naming expr can override default_expr
+    ns_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+    img_expr: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
+    ## is_validate_deploy_limits: true should be automatically to use k8s limitrange
+kind: ConfigMap
+metadata:
+  name: melon
