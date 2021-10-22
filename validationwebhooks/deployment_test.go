@@ -145,7 +145,6 @@ const (
     }
   }
 }`
-	deniedErrorMessage = `not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`
 )
 
 func TestDeploymentValidator_Handle(t *testing.T) {
@@ -231,7 +230,17 @@ func TestDeploymentValidator_InjectDecoder(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "test inject decoder",
+			v: &DeploymentValidator{
+				Client:   fake.NewClientBuilder().Build(),
+				ConfPath: "../internal/testdata",
+				decoder:  decoder,
+			},
+			args: args{
+				d: decoder,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
