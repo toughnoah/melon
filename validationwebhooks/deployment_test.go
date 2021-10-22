@@ -77,7 +77,13 @@ const (
                 "name": "html",
                 "mountPath": "/usr/share/nginx/html"
               }
-            ]
+            ],
+            "resources": {
+              "limits": {
+                "cpu": "500m",
+                "memory": "4Gi"
+              }
+            }
           }
         ],
         "volumes": [
@@ -97,6 +103,59 @@ const (
   "kind": "Deployment",
   "metadata": {
     "name": "nginx-deployment-test",
+    "labels": {
+      "app": "nginx"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "app": "nginx"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "nginx"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "web",
+            "image": "nginx",
+            "ports": [
+              {
+                "name": "web",
+                "containerPort": 80
+              }
+            ],
+            "volumeMounts": [
+              {
+                "name": "html",
+                "mountPath": "/usr/share/nginx/html"
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "html",
+            "persistentVolumeClaim": {
+              "claimName": "efs-claim-expand-test"
+            }
+          }
+        ]
+      }
+    }
+  }
+}`
+	testDeploymentNoLimitFailed = `{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "noah-dev-deployment-test",
     "labels": {
       "app": "nginx"
     }
@@ -209,6 +268,32 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 				},
 			},
 			want: admission.Denied(fmt.Sprintf(namingCheckError, deniedErrorMessage)),
+		},
+		{
+			name: "test validate limit failed",
+			v: &DeploymentValidator{
+				Client:   fake.NewClientBuilder().Build(),
+				ConfPath: "../internal/testdata",
+				decoder:  decoder,
+			},
+			args: args{
+				ctx: ctx,
+				req: admission.Request{
+					AdmissionRequest: admissionv1.AdmissionRequest{
+						UID: "fake_request_allowed",
+						RequestKind: &metav1.GroupVersionKind{
+							Group:   "apps",
+							Version: "v1",
+							Kind:    "Deployment",
+						},
+						Object: runtime.RawExtension{
+							Raw:    []byte(testDeploymentNoLimitFailed),
+							Object: &appsv1.Deployment{},
+						},
+					},
+				},
+			},
+			want: admission.Denied(fmt.Sprintf(noResourcesLimitsError)),
 		},
 	}
 	for _, tt := range tests {
@@ -333,13 +418,10 @@ func Test_validateResources(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := validateResources(tt.args.deploy)
+			err := validateResources(tt.args.deploy)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("validateResources() error = %v, wantErr %v", err, tt.wantErr)
 				return
-			}
-			if got != tt.want {
-				t.Errorf("validateResources() = %v, want %v", got, tt.want)
 			}
 		})
 	}
