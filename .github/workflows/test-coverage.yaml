@@ -19,7 +19,7 @@ jobs:
           go-version: 1.16
 
       - name: Test
-        run: go test ./... -ginkgo.v -coverprofile=coverage.txt
+        run: go test ./... -coverprofile=coverage.txt
       - name: "upload test coverage report"
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
