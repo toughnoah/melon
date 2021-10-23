@@ -31,3 +31,11 @@ func TestIsToValidateLimits(t *testing.T) {
 		})
 	}
 }
+
+func TestIsToValidateLimitsWithSetFalse(t *testing.T) {
+	viper.Set("is_validate_deploy_limits", "string")
+	if got := IsToValidateLimits(); got != false {
+		t.Errorf("IsToValidateLimits() = %v, want %v", got, false)
+	}
+	viper.Reset()
+}

@@ -321,7 +321,7 @@ func TestDeploymentValidator_InjectDecoder(t *testing.T) {
 			name: "test inject decoder",
 			v: &DeploymentValidator{
 				Client:   fake.NewClientBuilder().Build(),
-				ConfPath: "../internal/testdata",
+				ConfPath: "../tests/testdata",
 				decoder:  decoder,
 			},
 			args: args{
