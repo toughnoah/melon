@@ -84,6 +84,7 @@ func validateResources(deploy *appsv1.Deployment) error {
 	return nil
 }
 
-func validateImageNaming(deploy *appsv1.Deployment) error {
-	return nil
-}
+//
+//func validateImageNaming(deploy *appsv1.Deployment) error {
+//	return nil
+//}
