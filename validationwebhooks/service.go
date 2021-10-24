@@ -11,30 +11,30 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
-type NamespaceValidator struct {
+type ServiceValidator struct {
 	Client   client.Client
 	decoder  *admission.Decoder
 	ConfPath string
 }
 
-func (v *NamespaceValidator) Handle(ctx context.Context, req admission.Request) admission.Response {
-	namespace := &corev1.Namespace{}
+func (v *ServiceValidator) Handle(_ context.Context, req admission.Request) admission.Response {
+	svc := &corev1.Service{}
 
-	err := v.decoder.Decode(req, namespace)
+	err := v.decoder.Decode(req, svc)
 	if err != nil {
 		klog.Errorf(decodeError, err.Error())
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	err = ValidateNaming(namespace.Name, v.ConfPath, Namespace)
+	err = ValidateNaming(svc.Name, v.ConfPath, Service)
 	if err != nil {
-		klog.Errorf(namingCheckError, "Namespaces", err.Error())
-		return admission.Denied(fmt.Sprintf(namingCheckError, "Namespaces", err.Error()))
+		klog.Errorf(namingCheckError, "Services", err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, "Services", err.Error()))
 	}
 	return admission.Allowed("")
 }
 
-func (v *NamespaceValidator) InjectDecoder(d *admission.Decoder) error {
+func (v *ServiceValidator) InjectDecoder(d *admission.Decoder) error {
 	v.decoder = d
 	return nil
 }

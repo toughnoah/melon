@@ -58,8 +58,10 @@ func main() {
 
 	entryLog.Info("registering webhooks to the webhook server")
 	confPath := *file
-	hookServer.Register("/validate-v1-deployment", &webhook.Admission{Handler: &wb.DeploymentValidator{Client: mgr.GetClient()}})
+	hookServer.Register("/validate-apps-v1-deployment", &webhook.Admission{Handler: &wb.DeploymentValidator{Client: mgr.GetClient(), ConfPath: confPath}})
 	hookServer.Register("/validate-v1-namespace", &webhook.Admission{Handler: &wb.NamespaceValidator{Client: mgr.GetClient(), ConfPath: confPath}})
+	hookServer.Register("/validate-v1-service", &webhook.Admission{Handler: &wb.ServiceValidator{Client: mgr.GetClient(), ConfPath: confPath}})
+	hookServer.Register("/validate-v1-configmap", &webhook.Admission{Handler: &wb.ConfigmapValidator{Client: mgr.GetClient(), ConfPath: confPath}})
 
 	entryLog.Info("starting manager")
 	if err := mgr.Start(signals.SetupSignalHandler()); err != nil {

@@ -19,13 +19,13 @@ package validationwebhooks
 import (
 	"context"
 	"fmt"
-	v1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
 	"reflect"
 	"testing"
 
 	admissionv1 "k8s.io/api/admission/v1"
 	appsv1 "k8s.io/api/apps/v1"
+	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -411,7 +411,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 					},
 				},
 			},
-			want: admission.Denied(fmt.Sprintf(namingCheckError, "nginx-deployment-test not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)")),
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "Deployments", "nginx-deployment-test not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)")),
 		},
 		{
 			name: "test validate limit failed",
@@ -463,7 +463,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 					},
 				},
 			},
-			want: admission.Denied(fmt.Sprintf(namingCheckError, "nginx not match the expr ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0")),
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "Images", "nginx not match the expr ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0")),
 		},
 		{
 			name: "test validate image failed",
@@ -489,7 +489,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 					},
 				},
 			},
-			want: admission.Denied(fmt.Sprintf(namingCheckError, "nginx not match the expr ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0")),
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "Images", "nginx not match the expr ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0")),
 		},
 	}
 	for _, tt := range tests {

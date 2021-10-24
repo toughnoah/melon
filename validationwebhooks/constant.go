@@ -1,7 +1,7 @@
 package validationwebhooks
 
 const (
-	namingCheckError = "naming check failed: %s"
+	namingCheckError = "%s naming check failed: %s"
 
 	decodeError = "decode error: %s"
 

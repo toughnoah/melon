@@ -9,4 +9,6 @@ ns_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
 img_expr: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
 
+svc_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+
 is_validate_deploy_limits: true

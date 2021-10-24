@@ -45,8 +45,8 @@ func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request)
 	}
 
 	if err = ValidateNaming(deploy.Name, v.ConfPath, Deployment); err != nil {
-		klog.Errorf(namingCheckError, err.Error())
-		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))
+		klog.Errorf(namingCheckError, "Deployments", err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, "Deployments", err.Error()))
 	}
 	if IsToValidateLimits() {
 		err = validateResources(deploy)
@@ -55,8 +55,8 @@ func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request)
 		}
 	}
 	if err = validateImageNaming(deploy, v.ConfPath); err != nil {
-		klog.Errorf(namingCheckError, err.Error())
-		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))
+		klog.Errorf(namingCheckError, "Images", err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, "Images", err.Error()))
 	}
 	return admission.Allowed("")
 
