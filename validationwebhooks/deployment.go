@@ -20,13 +20,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	v1 "k8s.io/api/core/v1"
-	"k8s.io/klog/v2"
-	"net/http"
-	"reflect"
-
 	. "github.com/toughnoah/melon/internal/utils"
 	appsv1 "k8s.io/api/apps/v1"
+	"k8s.io/klog/v2"
+	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
@@ -47,8 +44,7 @@ func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request)
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	err = ValidateNaming(deploy.Name, v.ConfPath, Deployment)
-	if err != nil {
+	if err = ValidateNaming(deploy.Name, v.ConfPath, Deployment); err != nil {
 		klog.Errorf(namingCheckError, err.Error())
 		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))
 	}
@@ -58,7 +54,10 @@ func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request)
 			return admission.Denied(err.Error())
 		}
 	}
-
+	if err = validateImageNaming(deploy, v.ConfPath); err != nil {
+		klog.Errorf(namingCheckError, err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, err.Error()))
+	}
 	return admission.Allowed("")
 
 }
@@ -76,7 +75,6 @@ func validateResources(deploy *appsv1.Deployment) error {
 		return errors.New(noContainerError)
 	}
 	for _, container := range containerArray {
-		fmt.Println(reflect.DeepEqual(container.Resources.Limits, v1.ResourceList{}))
 		if len(container.Resources.Limits) == 0 {
 			return errors.New(noResourcesLimitsError)
 		}
@@ -85,6 +83,16 @@ func validateResources(deploy *appsv1.Deployment) error {
 }
 
 //
-//func validateImageNaming(deploy *appsv1.Deployment) error {
-//	return nil
-//}
+func validateImageNaming(deploy *appsv1.Deployment, confPath string) error {
+	containerArray := deploy.Spec.Template.Spec.Containers
+	if len(containerArray) == 0 {
+		return errors.New(noContainerError)
+	}
+	for _, container := range containerArray {
+		err := ValidateNaming(container.Image, confPath, Image)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

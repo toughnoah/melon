@@ -7,4 +7,6 @@ deploy_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 # namespaces naming expr can override default_expr
 ns_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
+img_expr: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
+
 is_validate_deploy_limits: true
