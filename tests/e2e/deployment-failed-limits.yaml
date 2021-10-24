@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: noah-sa-melon-test
+  namespace: noah-sa-melon-test
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: web
+        image: nginx
+        ports:
+          - name: web
+            containerPort: 80
+        volumeMounts:
+            - name: html
+              mountPath: "/usr/share/nginx/html"
+      volumes:
+      - name: html
+        persistentVolumeClaim:
+          claimName: efs-claim-expand-test
