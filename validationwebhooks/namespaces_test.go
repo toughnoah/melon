@@ -91,7 +91,7 @@ func TestNamespaceValidator_Handle(t *testing.T) {
 					},
 				},
 			},
-			want: admission.Denied(fmt.Sprintf(namingCheckError, deniedErrorMessage)),
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "noah-test not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)")),
 		},
 	}
 	for _, tt := range tests {

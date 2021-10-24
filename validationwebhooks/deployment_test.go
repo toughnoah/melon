@@ -65,7 +65,7 @@ const (
         "containers": [
           {
             "name": "web",
-            "image": "nginx",
+            "image": "docker.io/toughnoah/melon:v1.0",
             "ports": [
               {
                 "name": "web",
@@ -125,7 +125,7 @@ const (
         "containers": [
           {
             "name": "web",
-            "image": "nginx",
+            "image": "docker.io/toughnoah/melon:v1.0",
             "ports": [
               {
                 "name": "web",
@@ -179,7 +179,7 @@ const (
         "containers": [
           {
             "name": "web",
-            "image": "nginx",
+            "image": "docker.io/toughnoah/melon:v1.0",
             "ports": [
               {
                 "name": "web",
@@ -192,6 +192,148 @@ const (
                 "mountPath": "/usr/share/nginx/html"
               }
             ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "html",
+            "persistentVolumeClaim": {
+              "claimName": "efs-claim-expand-test"
+            }
+          }
+        ]
+      }
+    }
+  }
+}`
+
+	testDeploymentImageFailed = `{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "noah-dev-deployment-test",
+    "labels": {
+      "app": "nginx"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "app": "nginx"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "nginx"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "web",
+            "image": "nginx",
+            "ports": [
+              {
+                "name": "web",
+                "containerPort": 80
+              }
+            ],
+            "volumeMounts": [
+              {
+                "name": "html",
+                "mountPath": "/usr/share/nginx/html"
+              }
+            ],
+            "resources": {
+              "limits": {
+                "cpu": "500m",
+                "memory": "4Gi"
+              }
+            }
+          }
+        ],
+        "volumes": [
+          {
+            "name": "html",
+            "persistentVolumeClaim": {
+              "claimName": "efs-claim-expand-test"
+            }
+          }
+        ]
+      }
+    }
+  }
+}`
+
+	testDeploymentMultiImagesFailed = `{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "noah-dev-deployment-test",
+    "labels": {
+      "app": "nginx"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "app": "nginx"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "nginx"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "web",
+            "image": "docker.io/toughnoah/melon:v1.0",
+            "ports": [
+              {
+                "name": "web",
+                "containerPort": 80
+              }
+            ],
+            "volumeMounts": [
+              {
+                "name": "html",
+                "mountPath": "/usr/share/nginx/html"
+              }
+            ],
+            "resources": {
+              "limits": {
+                "cpu": "500m",
+                "memory": "4Gi"
+              }
+            }
+          },
+          {
+            "name": "web",
+            "image": "nginx",
+            "ports": [
+              {
+                "name": "web",
+                "containerPort": 80
+              }
+            ],
+            "volumeMounts": [
+              {
+                "name": "html",
+                "mountPath": "/usr/share/nginx/html"
+              }
+            ],
+            "resources": {
+              "limits": {
+                "cpu": "500m",
+                "memory": "4Gi"
+              }
+            }
           }
         ],
         "volumes": [
@@ -269,7 +411,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 					},
 				},
 			},
-			want: admission.Denied(fmt.Sprintf(namingCheckError, deniedErrorMessage)),
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "nginx-deployment-test not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)")),
 		},
 		{
 			name: "test validate limit failed",
@@ -296,6 +438,58 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 				},
 			},
 			want: admission.Denied(fmt.Sprintf(noResourcesLimitsError)),
+		},
+		{
+			name: "test validate image failed",
+			v: &DeploymentValidator{
+				Client:   fake.NewClientBuilder().Build(),
+				ConfPath: "../tests/testdata",
+				decoder:  decoder,
+			},
+			args: args{
+				ctx: ctx,
+				req: admission.Request{
+					AdmissionRequest: admissionv1.AdmissionRequest{
+						UID: "fake_request_allowed",
+						RequestKind: &metav1.GroupVersionKind{
+							Group:   "apps",
+							Version: "v1",
+							Kind:    "Deployment",
+						},
+						Object: runtime.RawExtension{
+							Raw:    []byte(testDeploymentImageFailed),
+							Object: &appsv1.Deployment{},
+						},
+					},
+				},
+			},
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "nginx not match the expr ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0")),
+		},
+		{
+			name: "test validate image failed",
+			v: &DeploymentValidator{
+				Client:   fake.NewClientBuilder().Build(),
+				ConfPath: "../tests/testdata",
+				decoder:  decoder,
+			},
+			args: args{
+				ctx: ctx,
+				req: admission.Request{
+					AdmissionRequest: admissionv1.AdmissionRequest{
+						UID: "fake_request_allowed",
+						RequestKind: &metav1.GroupVersionKind{
+							Group:   "apps",
+							Version: "v1",
+							Kind:    "Deployment",
+						},
+						Object: runtime.RawExtension{
+							Raw:    []byte(testDeploymentMultiImagesFailed),
+							Object: &appsv1.Deployment{},
+						},
+					},
+				},
+			},
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "nginx not match the expr ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0")),
 		},
 	}
 	for _, tt := range tests {

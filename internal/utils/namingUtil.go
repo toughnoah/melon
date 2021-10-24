@@ -23,8 +23,12 @@ const (
 
 	Secret
 
+	Image
+
 	Default
 )
+
+const DefaultMatchAllExpr = ".*?"
 
 var resourceTypeKeyMap = map[int]string{
 	Deployment: "deploy_expr",
@@ -34,7 +38,12 @@ var resourceTypeKeyMap = map[int]string{
 	Configmap:  "cm_expr",
 	Daemonset:  "ds_expr",
 	Secret:     "sc_expr",
+	Image:      "img_expr",
 	Default:    "default_expr",
+}
+
+func init() {
+	viper.SetDefault("img_expr", ".*?")
 }
 
 func getNamingExpr(path string, kind int) (string, error) {
@@ -49,7 +58,6 @@ func getNamingExpr(path string, kind int) (string, error) {
 		return "", err
 	}
 	exprKey, ok := resourceTypeKeyMap[kind]
-
 	if !ok {
 		return "", errors.New(noSuchKindError)
 	}
@@ -57,12 +65,15 @@ func getNamingExpr(path string, kind int) (string, error) {
 	if ok && len(expr) != 0 {
 		return expr, nil
 	}
+	klog.V(2).Infof("no %s naming expr specified or value assertion fails, try default expr", kind)
 	defaultKey := resourceTypeKeyMap[Default]
+
 	expr, ok = viper.Get(defaultKey).(string)
 	if ok && len(expr) != 0 {
 		return expr, nil
 	}
-	return expr, errors.New(fmt.Sprintf(namingError, expr))
+	klog.V(2).Infof("no %s naming expr specified or value assertion fails, pass all", Default)
+	return DefaultMatchAllExpr, nil
 }
 
 func validateNaming(name, expr string) error {
@@ -75,7 +86,7 @@ func validateNaming(name, expr string) error {
 	if match != nil {
 		return nil
 	}
-	return errors.New(fmt.Sprintf(matchExprError, expr))
+	return errors.New(fmt.Sprintf(matchExprError, name, expr))
 }
 
 func ValidateNaming(name, path string, kind int) error {
