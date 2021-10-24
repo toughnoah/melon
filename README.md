@@ -35,7 +35,7 @@ change the name and namespace of the configmap, deployment, service that you sig
 
 Then
 ```shell
-kubectl apply -k ./deploys
+kubectl apply -k ./deploy
 ```
 
 ### Create webhook
