@@ -21,10 +21,10 @@ func TestIsToValidateLimits(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.want {
-				viper.Set("is_validate_deploy_limits", true)
+			if !tt.want {
+				viper.Set("deployment.limits", false)
 			}
-			if got := IsToValidateLimits(); got != tt.want {
+			if got := IsToValidateLimits("../../tests/testdata", "deployment.limits"); got != tt.want {
 				t.Errorf("IsToValidateLimits() = %v, want %v", got, tt.want)
 			}
 			viper.Reset()
@@ -33,8 +33,8 @@ func TestIsToValidateLimits(t *testing.T) {
 }
 
 func TestIsToValidateLimitsWithSetFalse(t *testing.T) {
-	viper.Set("is_validate_deploy_limits", "string")
-	if got := IsToValidateLimits(); got != false {
+	viper.Set("deployment.limits", "string")
+	if got := IsToValidateLimits("../../tests/testdata", "deployment.limits"); got != false {
 		t.Errorf("IsToValidateLimits() = %v, want %v", got, false)
 	}
 	viper.Reset()

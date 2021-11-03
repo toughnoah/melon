@@ -5,7 +5,7 @@ const (
 
 	matchExprError = "%s not match the expr %s"
 
-	noSuchKindError = "no such kind for expr key"
+	badValueTypeError = "bad value type of %s, want %s"
 
-	badValueTypeError = "bad value type of is_validate_deploy_limits, want %s"
+	emptyValueError = "get empty rule for validating: %s"
 )

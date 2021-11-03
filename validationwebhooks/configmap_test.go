@@ -98,7 +98,7 @@ func TestConfigmapValidator_Handle(t *testing.T) {
 					},
 				},
 			},
-			want: admission.Denied(fmt.Sprintf(namingCheckError, "ConfigMaps", "melon-config-test not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)")),
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "configmap.naming", "melon-config-test not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)")),
 		},
 	}
 	for _, tt := range tests {

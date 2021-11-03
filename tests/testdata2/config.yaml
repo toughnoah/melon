@@ -3,10 +3,10 @@ global:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
 # deployment naming expr can override default_expr
-deployment:
-  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
-  image: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
-  limits: true
+#deployment:
+#  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+#  image: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
+#  limits: true
 
 # namespaces naming expr can override default_expr
 namespace:
