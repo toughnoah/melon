@@ -26,10 +26,10 @@ func (v *ServiceValidator) Handle(_ context.Context, req admission.Request) admi
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	err = ValidateNaming(svc.Name, v.ConfPath, Service)
+	err = ValidateNaming(svc.Name, v.ConfPath, ServiceNamingKind)
 	if err != nil {
-		klog.Errorf(namingCheckError, "Services", err.Error())
-		return admission.Denied(fmt.Sprintf(namingCheckError, "Services", err.Error()))
+		klog.Errorf(namingCheckError, ServiceNamingKind, err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, ServiceNamingKind, err.Error()))
 	}
 	return admission.Allowed("")
 }

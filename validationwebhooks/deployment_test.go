@@ -411,7 +411,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 					},
 				},
 			},
-			want: admission.Denied(fmt.Sprintf(namingCheckError, "Deployments", "nginx-deployment-test not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)")),
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "deployment.naming", "nginx-deployment-test not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)")),
 		},
 		{
 			name: "test validate limit failed",
@@ -463,7 +463,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 					},
 				},
 			},
-			want: admission.Denied(fmt.Sprintf(namingCheckError, "Images", "nginx not match the expr ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0")),
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "deployment.image", "nginx not match the expr ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0")),
 		},
 		{
 			name: "test validate image failed",
@@ -489,7 +489,7 @@ func TestDeploymentValidator_Handle(t *testing.T) {
 					},
 				},
 			},
-			want: admission.Denied(fmt.Sprintf(namingCheckError, "Images", "nginx not match the expr ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0")),
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "deployment.image", "nginx not match the expr ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0")),
 		},
 	}
 	for _, tt := range tests {

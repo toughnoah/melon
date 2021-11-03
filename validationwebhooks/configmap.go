@@ -26,10 +26,10 @@ func (v *ConfigmapValidator) Handle(_ context.Context, req admission.Request) ad
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	err = ValidateNaming(cm.Name, v.ConfPath, Configmap)
+	err = ValidateNaming(cm.Name, v.ConfPath, ConfigmapNamingKind)
 	if err != nil {
-		klog.Errorf(namingCheckError, "ConfigMaps", err.Error())
-		return admission.Denied(fmt.Sprintf(namingCheckError, "ConfigMaps", err.Error()))
+		klog.Errorf(namingCheckError, ConfigmapNamingKind, err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, ConfigmapNamingKind, err.Error()))
 	}
 	return admission.Allowed("")
 }

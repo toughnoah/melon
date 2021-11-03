@@ -116,7 +116,7 @@ func TestServiceValidator_Handle(t *testing.T) {
 					},
 				},
 			},
-			want: admission.Denied(fmt.Sprintf(namingCheckError, "Services", "nginx-svc not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)")),
+			want: admission.Denied(fmt.Sprintf(namingCheckError, "service.naming", "nginx-svc not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)")),
 		},
 	}
 	for _, tt := range tests {

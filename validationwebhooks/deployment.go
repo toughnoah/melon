@@ -44,19 +44,19 @@ func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request)
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	if err = ValidateNaming(deploy.Name, v.ConfPath, Deployment); err != nil {
-		klog.Errorf(namingCheckError, "Deployments", err.Error())
-		return admission.Denied(fmt.Sprintf(namingCheckError, "Deployments", err.Error()))
+	if err = ValidateNaming(deploy.Name, v.ConfPath, DeploymentNamingKind); err != nil {
+		klog.Errorf(namingCheckError, DeploymentNamingKind, err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, DeploymentNamingKind, err.Error()))
 	}
-	if IsToValidateLimits() {
+	if IsToValidateLimits(v.ConfPath, DeploymentLimitsKind) {
 		err = validateResources(deploy)
 		if err != nil {
 			return admission.Denied(err.Error())
 		}
 	}
 	if err = validateImageNaming(deploy, v.ConfPath); err != nil {
-		klog.Errorf(namingCheckError, "Images", err.Error())
-		return admission.Denied(fmt.Sprintf(namingCheckError, "Images", err.Error()))
+		klog.Errorf(namingCheckError, DeploymentImageKind, err.Error())
+		return admission.Denied(fmt.Sprintf(namingCheckError, DeploymentImageKind, err.Error()))
 	}
 	return admission.Allowed("")
 
@@ -89,7 +89,7 @@ func validateImageNaming(deploy *appsv1.Deployment, confPath string) error {
 		return errors.New(noContainerError)
 	}
 	for _, container := range containerArray {
-		err := ValidateNaming(container.Image, confPath, Image)
+		err := ValidateNaming(container.Image, confPath, DeploymentImageKind)
 		if err != nil {
 			return err
 		}

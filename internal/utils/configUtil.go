@@ -1,19 +1,18 @@
 package utils
 
 import (
-	"github.com/spf13/viper"
 	"k8s.io/klog/v2"
 )
 
-func IsToValidateLimits() bool {
-	isValidateLimits := viper.Get("is_validate_deploy_limits")
+func IsToValidateLimits(path string, kind string) bool {
+	isValidateLimits, _ := GetValFromConfig(path, kind)
 
 	if isValidateLimits == nil {
 		return false
 	}
 	is, ok := isValidateLimits.(bool)
 	if !ok {
-		klog.Errorf(badValueTypeError, "bool")
+		klog.Errorf(badValueTypeError, kind, "bool")
 		return false
 	}
 	return is

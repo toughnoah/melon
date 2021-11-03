@@ -12,4 +12,16 @@ const (
 	testDeniedErrorMessage = `not match the expr ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`
 
 	testImageNamingFailedMessage = `not match the expr ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0`
+
+	DeploymentNamingKind = "deployment.naming"
+
+	DeploymentImageKind = "deployment.image"
+
+	DeploymentLimitsKind = "deployment.limits"
+
+	NamespaceNamingKind = "namespace.naming"
+
+	ServiceNamingKind = "service.naming"
+
+	ConfigmapNamingKind = "configmap.naming"
 )

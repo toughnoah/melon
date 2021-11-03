@@ -1,14 +1,16 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"testing"
 )
 
-func Test_getNamingExpr(t *testing.T) {
+//
+func Test_GetValFromConfig(t *testing.T) {
 	type args struct {
 		path string
-		kind int
+		kind string
 	}
 	tests := []struct {
 		name    string
@@ -18,25 +20,25 @@ func Test_getNamingExpr(t *testing.T) {
 	}{
 		{
 			name:    "test correct expr",
-			args:    args{"../../tests/testdata", Deployment},
+			args:    args{"../../tests/testdata", "deployment.naming"},
 			want:    `^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`,
 			wantErr: false,
 		},
 		{
-			name:    "test default expr",
-			args:    args{"../../tests/testdata", Secret},
+			name:    "test global naming",
+			args:    args{"../../tests/testdata2", "deployment.naming"},
 			want:    `^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)`,
 			wantErr: false,
 		},
 		{
-			name:    "test correct expr",
-			args:    args{"../abc", Deployment},
+			name:    "test correct expr with wrong path",
+			args:    args{"../abc", "deployment.naming"},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getNamingExpr(tt.args.path, tt.args.kind)
+			got, err := GetValFromConfig(tt.args.path, tt.args.kind)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getNamingExpr() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -90,7 +92,7 @@ func TestValidateNaming(t *testing.T) {
 	type args struct {
 		name string
 		path string
-		kind int
+		kind string
 	}
 	tests := []struct {
 		name    string
@@ -102,7 +104,7 @@ func TestValidateNaming(t *testing.T) {
 			args: args{
 				name: "noah-dev-melon-test",
 				path: "../../tests/testdata",
-				kind: Deployment,
+				kind: "deployment.naming",
 			},
 			wantErr: false,
 		},
@@ -122,4 +124,12 @@ func TestValidateNaming(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestGetConfig(t *testing.T) {
+	config, err := GetValFromConfig("../../tests/testdata", "deployment.naming")
+	if err != nil {
+		return
+	}
+	fmt.Println(config)
 }

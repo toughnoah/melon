@@ -87,17 +87,23 @@ Now melon only supports the keys shown below. I am working on it.
 New feature is comming soon. Any advice is welcome. Please stay.
 ```yaml
 #global expr for all Kind
-default_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+global:
+  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
 # deployment naming expr can override default_expr
-deploy_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+deployment:
+  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+  image: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
+  limits: true
 
 # namespaces naming expr can override default_expr
-ns_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+namespace:
+  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
-img_expr: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
+# service naming expr can override default_expr
+service:
+  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
-svc_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
-
-is_validate_deploy_limits: true
+configmap:
+  naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 ```
