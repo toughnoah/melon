@@ -1,20 +1,23 @@
-#global expr for all Kind
+#global.naming for all Kind
 global:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
-# deployment naming expr can override default_expr
+# deployment.naming can override global.naming
 deployment:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+  # check image naming
   image: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
+  # check if resources.limits is set
   limits: true
 
-# namespaces naming expr can override default_expr
+# namespace.naming expr can override global.naming
 namespace:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
-# service naming expr can override default_expr
+# service.naming can override global.naming
 service:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
+# configmap.naming can override global.naming
 configmap:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
