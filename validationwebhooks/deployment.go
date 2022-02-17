@@ -18,7 +18,6 @@ package validationwebhooks
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"net/http"
@@ -60,31 +59,4 @@ func (v *DeploymentValidator) InjectDecoder(d *admission.Decoder) error {
 	return nil
 }
 
-func validateResources(deploy *appsv1.Deployment) error {
-
-	containerArray := deploy.Spec.Template.Spec.Containers
-	if len(containerArray) == 0 {
-		return errors.New(noContainerError)
-	}
-	for _, container := range containerArray {
-		if len(container.Resources.Limits) == 0 {
-			return errors.New(noResourcesLimitsError)
-		}
-	}
-	return nil
-}
-
 //
-func validateImageNaming(deploy *appsv1.Deployment, confPath string) error {
-	containerArray := deploy.Spec.Template.Spec.Containers
-	if len(containerArray) == 0 {
-		return errors.New(noContainerError)
-	}
-	for _, container := range containerArray {
-		err := ValidateNaming(container.Image, confPath, DeploymentImageKind)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
