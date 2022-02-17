@@ -15,7 +15,7 @@ const (
 
 	DeploymentNamingKind = "deployment.naming"
 
-	DeploymentImageKind = "deployment.image"
+	ImageKind = "image"
 
 	DeploymentLimitsKind = "deployment.limits"
 
@@ -24,4 +24,8 @@ const (
 	ServiceNamingKind = "service.naming"
 
 	ConfigmapNamingKind = "configmap.naming"
+
+	DeploymentLimitRangeKind = "deployment.resources.limitRangeSpec"
+
+	DeploymentResourceQuatoKind = "deployment.resources.resourceQuato"
 )

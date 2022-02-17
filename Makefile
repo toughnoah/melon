@@ -6,6 +6,7 @@ run:
 	@go run cmd/main.go
 
 build:
+	@go mod tidy
 	@export CGO_ENABLED=0 && go build -o $(BUILD) cmd/main.go
 
 image: build

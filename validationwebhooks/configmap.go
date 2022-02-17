@@ -3,10 +3,12 @@ package validationwebhooks
 import (
 	"context"
 	"fmt"
+
+	"net/http"
+
 	. "github.com/toughnoah/melon/internal/utils"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/klog/v2"
-	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
@@ -19,7 +21,6 @@ type ConfigmapValidator struct {
 
 func (v *ConfigmapValidator) Handle(_ context.Context, req admission.Request) admission.Response {
 	cm := &corev1.ConfigMap{}
-
 	err := v.decoder.Decode(req, cm)
 	if err != nil {
 		klog.Errorf(decodeError, err.Error())

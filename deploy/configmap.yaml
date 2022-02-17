@@ -7,7 +7,7 @@ data:
     ## namespaces naming expr can override default_expr
     ns_expr: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
     img_expr: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
-    is_validate_deploy_limits: true
+    ## is_validate_deploy_limits: true should be automatically to use k8s limitrange
 kind: ConfigMap
 metadata:
   name: melon
