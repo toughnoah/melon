@@ -132,6 +132,7 @@ func main() {
 	entryLog.Info("setting up webhook server")
 	hookServer := mgr.GetWebhookServer()
 
+
 	hookServer.Register("/validate-apps-v1-deployment", &webhook.Admission{Handler: &vw.DeploymentValidator{Client: client, ConfPath: confPath}})
 	hookServer.Register("/validate-v1-namespace", &webhook.Admission{Handler: &vw.NamespaceValidator{Client: client, ConfPath: confPath}})
 	hookServer.Register("/validate-v1-service", &webhook.Admission{Handler: &vw.ServiceValidator{Client: client, ConfPath: confPath}})

@@ -27,3 +27,4 @@ configmap:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
     
 image: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
+
