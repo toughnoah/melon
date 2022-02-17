@@ -86,27 +86,33 @@ Now melon only supports the keys shown below. I am working on it.
 
 New feature is comming soon. Any advice is welcome. Please stay.
 ```yaml
-#global.naming for all Kind
 global:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
-# deployment.naming can override global.naming
 deployment:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
-  # check image naming
-  image: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
-  # check if resources.limits is set
-  limits: true
+  resources:
+    resourceQuotaSpec:
+      hard:
+        cpu: "10"
+        memory: 20Gi
+        pods: "10"
+    limitRangeSpec:
+      limits:
+      - max:
+          cpu: "800m"
+        min:
+          cpu: "200m"
+        type: Container
 
-# namespace.naming expr can override global.naming
 namespace:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
-# service.naming can override global.naming
 service:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
 
-# configmap.naming can override global.naming
 configmap:
   naming: ^(?:noah|blackbean|melon)-(?:dev|qa|sa)-.+?-(?:test|prod)
+
+image: ^(?:docker.io)/(?:toughnoah|test)/.+?:v1.0
 ```
