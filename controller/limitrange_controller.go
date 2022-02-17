@@ -21,7 +21,6 @@ import (
 	"reflect"
 
 	. "github.com/toughnoah/melon/internal/utils"
-	"istio.io/client-go/pkg/apis/networking/v1beta1"
 	v1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -39,7 +38,6 @@ type ReconcileLimitRange struct {
 // Implement reconcile.Reconciler so the controller can reconcile objects
 var _ reconcile.Reconciler = &ReconcileLimitRange{}
 var lLog = log.Log.WithName("limitRange-controller")
-var ic = v1beta1.ServiceEntry{}
 
 func (r *ReconcileLimitRange) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
 
